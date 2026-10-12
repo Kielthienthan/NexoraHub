@@ -43,6 +43,7 @@ task.defer(fitHolder)
 
 local BG_COLOR = Color3.fromRGB(20, 16, 20)
 local STROKE_COLOR = Color3.fromRGB(244, 143, 177)
+local BAR_COLOR = Color3.fromRGB(180, 40, 90)
 local STROKE_HOVER = Color3.fromRGB(240, 150, 175)
 local ACCENT_COLOR = Color3.fromRGB(235, 199, 246)
 local TEXT_COLOR = Color3.fromRGB(233, 229, 234)
@@ -93,7 +94,7 @@ local function notify(opts)
 	local dur = opts.Duration or 4
 	local kind = opts.Type or "Info"
 
-	local accent = STROKE_COLOR
+	local accent = BAR_COLOR
 	if kind == "Warning" then
 		accent = WARN_COLOR
 	elseif kind == "Error" then
