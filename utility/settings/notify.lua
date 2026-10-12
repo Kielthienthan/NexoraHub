@@ -93,17 +93,11 @@ local function notify(opts)
 	local dur = opts.Duration or 4
 	local kind = opts.Type or "Info"
 
-	local accent = ACCENT_COLOR
-	local titleCol = TEXT_COLOR
-	if kind == "Success" then
-		accent = OK_COLOR
-		titleCol = OK_COLOR
-	elseif kind == "Warning" then
+	local accent = STROKE_COLOR
+	if kind == "Warning" then
 		accent = WARN_COLOR
-		titleCol = WARN_COLOR
 	elseif kind == "Error" then
 		accent = ERR_COLOR
-		titleCol = ERR_COLOR
 	end
 
 	toastId = toastId + 1
@@ -208,7 +202,7 @@ local function notify(opts)
 	title.BackgroundTransparency = 1
 	title.Text = opts.Title or "Notification"
 	title.TextSize = 14
-	title.TextColor3 = titleCol
+	title.TextColor3 = TEXT_COLOR
 	title.TextXAlignment = Enum.TextXAlignment.Left
 	title.TextYAlignment = Enum.TextYAlignment.Center
 	title.TextTruncate = Enum.TextTruncate.AtEnd
