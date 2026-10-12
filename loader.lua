@@ -1,10 +1,8 @@
 local scripts = {
-	[136599248168660] = "https://raw.githubusercontent.com/KielKeyHandler/Util/refs/heads/main/SoloHunter.lua",
-	[75992362647444] = "https://raw.githubusercontent.com/KielKeyHandler/Util/refs/heads/main/TapTapSimulator.lua",
-	[74260430392611] = "https://raw.githubusercontent.com/KielKeyHandler/Util/refs/heads/main/RebirthChampionUlti.lua",
-	[994732206] = "https://raw.githubusercontent.com/KielKeyHandler/Util/refs/heads/main/Centudox.lua",
-	[130247632398296] = "https://raw.githubusercontent.com/KielKeyHandler/Util/refs/heads/main/Afse.lua",
+	[537413528] = "https://raw.githubusercontent.com/KielKeyHandler/Util/refs/heads/main/SoloHunter.lua",
 }
+
+local universal = "https://raw.githubusercontent.com/KielKeyHandler/Util/refs/heads/main/Universal.lua"
 
 local function fetch(url)
 	local ok, res = pcall(function() return game:HttpGet(url) end)
@@ -44,12 +42,7 @@ local function executor()
 	return "unknown"
 end
 
-local url = scripts[game.PlaceId]
-
-if not url then
-	warn("[Loader] unsupported place " .. game.PlaceId .. " / " .. executor())
-	return
-end
+local url = scripts[game.PlaceId] or universal
 
 local ok, err = pcall(function()
 	local fn, e = loadstring(fetch(url))
