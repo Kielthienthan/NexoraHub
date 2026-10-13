@@ -234,8 +234,8 @@ task.spawn(function()
 
     pcall(function()
         notifyApi.Notify({
-            Title = "Loaded",
-            Content = "Interface module ready.",
+            Title = "Nexora Loaded Successfully",
+            Content = "Blatant Aimbot",
             Type = "Success",
             Duration = 4,
         })
