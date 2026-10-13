@@ -91,41 +91,48 @@ _G.StopFarm = function()
 end
 
 task.spawn(function()
+	print("[1] notify block started")
+
 	local fetchSuccess, source = pcall(function()
 		return game:HttpGet("https://raw.githubusercontent.com/Kielthienthan/NexoraHub/refs/heads/main/modules/Interface.lua")
 	end)
+	print("[2] fetch:", fetchSuccess, source and #source)
 
 	if not fetchSuccess or not source then return end
 
 	local runSuccess, returnedValue = pcall(function()
 		local module = loadstring(source)
+		print("[3] loadstring type:", type(module))
 		if type(module) == "function" then
 			return module()
 		end
 		return nil
 	end)
+	print("[4] run:", runSuccess, type(returnedValue))
 
 	if not runSuccess then return end
 
 	local notifyApi = returnedValue
-
 	if type(notifyApi) ~= "table" or not notifyApi.Notify then
 		notifyApi = rawget(_G, "Nexora")
 	end
+	print("[5] api:", type(notifyApi), notifyApi and type(notifyApi.Notify))
 
 	if type(notifyApi) ~= "table" or not notifyApi.Notify then
 		task.wait(0.2)
 		notifyApi = rawget(_G, "Nexora")
+		print("[5b] api retry:", type(notifyApi), notifyApi and type(notifyApi.Notify))
 	end
 
 	if type(notifyApi) ~= "table" or not notifyApi.Notify then return end
 
 	pcall(function()
 		notifyApi.Notify({
-			Title = "Nexora Loaded Successfully",
-			Content = "Build a Boat For Treasure",
+			Title = "Loaded",
+			Content = "Boat farm ready.",
 			Type = "Success",
 			Duration = 4,
 		})
 	end)
+	print("[6] notify called")
 end)
