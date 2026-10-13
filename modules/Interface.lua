@@ -4,59 +4,6 @@ local UserInputService = game:GetService("UserInputService")
 
 local Player = Players.LocalPlayer
 
-local gui = Instance.new("ScreenGui")
-gui.Name = "NexoraNotify"
-gui.ResetOnSpawn = false
-gui.IgnoreGuiInset = true
-gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-gui.DisplayOrder = 999
-
-local ok = pcall(function()
-	gui.Parent = game:GetService("CoreGui")
-end)
-if not ok or not gui.Parent then
-	gui.Parent = Player:WaitForChild("PlayerGui")
-end
-
-local holder = Instance.new("Frame")
-holder.Name = "Holder"
-holder.AnchorPoint = Vector2.new(1, 1)
-holder.Position = UDim2.new(1, -20, 1, -20)
-holder.Size = UDim2.new(0, 280, 1, -40)
-holder.BackgroundTransparency = 1
-holder.Parent = gui
-
-local listLayout = Instance.new("UIListLayout")
-listLayout.SortOrder = Enum.SortOrder.LayoutOrder
-listLayout.VerticalAlignment = Enum.VerticalAlignment.Bottom
-listLayout.Padding = UDim.new(0, 4)
-listLayout.Parent = holder
-
-local function fitHolder()
-	local w = gui.AbsoluteSize.X - 40
-	if w > 280 then w = 280 end
-	if w < 100 then w = 100 end
-	holder.Size = UDim2.new(0, w, 1, -40)
-end
-gui:GetPropertyChangedSignal("AbsoluteSize"):Connect(fitHolder)
-task.defer(fitHolder)
-
-local BG_COLOR = Color3.fromRGB(20, 16, 20)
-local STROKE_COLOR = Color3.fromRGB(244, 143, 177)
-local BAR_COLOR = Color3.fromRGB(180, 40, 90)
-local STROKE_HOVER = Color3.fromRGB(240, 150, 175)
-local ACCENT_COLOR = Color3.fromRGB(235, 199, 246)
-local TEXT_COLOR = Color3.fromRGB(233, 229, 234)
-local MUTED_COLOR = Color3.fromRGB(138, 127, 139)
-local GLOW_COLOR = Color3.fromRGB(226, 218, 230)
-local TRACK_COLOR = Color3.fromRGB(42, 36, 43)
-local OK_COLOR = Color3.fromRGB(150, 220, 170)
-local WARN_COLOR = Color3.fromRGB(240, 176, 108)
-local ERR_COLOR = Color3.fromRGB(240, 120, 120)
-
-local SHADOW_IMG = "rbxassetid://6014261993"
-local GLOW_IMG = "rbxassetid://8992230677"
-
 local fReg, fMed, fBold
 local gotFont = pcall(function()
 	local p = "rbxasset://fonts/families/BuilderSans.json"
@@ -85,20 +32,132 @@ local function tween(obj, goal, dur, style, dir)
 	return t
 end
 
+local markGui = Instance.new("ScreenGui")
+markGui.Name = "NexoraWatermark"
+markGui.ResetOnSpawn = false
+markGui.IgnoreGuiInset = true
+markGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+markGui.DisplayOrder = 999
+
+local ok1 = pcall(function()
+	markGui.Parent = game:GetService("CoreGui")
+end)
+if not ok1 or not markGui.Parent then
+	markGui.Parent = Player:WaitForChild("PlayerGui")
+end
+
+local pill = Instance.new("TextButton")
+pill.Name = "Pill"
+pill.AnchorPoint = Vector2.new(0.5, 0)
+pill.Position = UDim2.new(0.5, 0, 0, 10)
+pill.Size = UDim2.fromOffset(0, 28)
+pill.AutomaticSize = Enum.AutomaticSize.X
+pill.BackgroundColor3 = Color3.fromRGB(20, 16, 20)
+pill.BackgroundTransparency = 0.15
+pill.BorderSizePixel = 0
+pill.Text = ""
+pill.AutoButtonColor = false
+pill.Active = false
+pill.Selectable = false
+pill.ZIndex = 30
+pill.Parent = markGui
+
+local pillCorner = Instance.new("UICorner")
+pillCorner.CornerRadius = UDim.new(1, 0)
+pillCorner.Parent = pill
+
+local pillStroke = Instance.new("UIStroke")
+pillStroke.Color = Color3.fromRGB(244, 143, 177)
+pillStroke.Transparency = 0
+pillStroke.Thickness = 1
+pillStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+pillStroke.Parent = pill
+
+local pillPad = Instance.new("UIPadding")
+pillPad.PaddingLeft = UDim.new(0, 9)
+pillPad.PaddingRight = UDim.new(0, 11)
+pillPad.Parent = pill
+
+local pillIcon = Instance.new("ImageLabel")
+pillIcon.AnchorPoint = Vector2.new(0, 0.5)
+pillIcon.Position = UDim2.new(0, 0, 0.5, 0)
+pillIcon.Size = UDim2.fromOffset(16, 16)
+pillIcon.BackgroundTransparency = 1
+pillIcon.Image = "rbxassetid://103859712365480"
+pillIcon.ImageColor3 = Color3.fromRGB(244, 143, 177)
+pillIcon.ScaleType = Enum.ScaleType.Fit
+pillIcon.ZIndex = 31
+pillIcon.Parent = pill
+
+local pillLabel = Instance.new("TextLabel")
+pillLabel.Position = UDim2.fromOffset(22, 0)
+pillLabel.Size = UDim2.new(0, 0, 1, 0)
+pillLabel.AutomaticSize = Enum.AutomaticSize.X
+pillLabel.BackgroundTransparency = 1
+pillLabel.Text = "Nexora"
+pillLabel.TextSize = 11
+pillLabel.TextColor3 = Color3.fromRGB(233, 229, 234)
+pillLabel.TextXAlignment = Enum.TextXAlignment.Left
+pillLabel.TextYAlignment = Enum.TextYAlignment.Center
+pillLabel.TextTruncate = Enum.TextTruncate.None
+pillLabel.ZIndex = 31
+if typeof(fMed) == "EnumItem" then
+	pillLabel.Font = fMed
+else
+	pillLabel.FontFace = fMed
+end
+pillLabel.Parent = pill
+
+local nGui = Instance.new("ScreenGui")
+nGui.Name = "NexoraNotify"
+nGui.ResetOnSpawn = false
+nGui.IgnoreGuiInset = true
+nGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+nGui.DisplayOrder = 999
+
+local ok2 = pcall(function()
+	nGui.Parent = game:GetService("CoreGui")
+end)
+if not ok2 or not nGui.Parent then
+	nGui.Parent = Player:WaitForChild("PlayerGui")
+end
+
+local holder = Instance.new("Frame")
+holder.Name = "Holder"
+holder.AnchorPoint = Vector2.new(1, 1)
+holder.Position = UDim2.new(1, -20, 1, -20)
+holder.Size = UDim2.new(0, 280, 1, -40)
+holder.BackgroundTransparency = 1
+holder.Parent = nGui
+
+local listLayout = Instance.new("UIListLayout")
+listLayout.SortOrder = Enum.SortOrder.LayoutOrder
+listLayout.VerticalAlignment = Enum.VerticalAlignment.Bottom
+listLayout.Padding = UDim.new(0, 4)
+listLayout.Parent = holder
+
+local function fitHolder()
+	local w = nGui.AbsoluteSize.X - 40
+	if w > 280 then w = 280 end
+	if w < 100 then w = 100 end
+	holder.Size = UDim2.new(0, w, 1, -40)
+end
+nGui:GetPropertyChangedSignal("AbsoluteSize"):Connect(fitHolder)
+task.defer(fitHolder)
+
 local toastId = 0
 local liveToasts = {}
-local MAX_TOASTS = 4
 
 local function notify(opts)
 	opts = opts or {}
 	local dur = opts.Duration or 4
 	local kind = opts.Type or "Info"
 
-	local accent = BAR_COLOR
+	local accent = Color3.fromRGB(180, 40, 90)
 	if kind == "Warning" then
-		accent = WARN_COLOR
+		accent = Color3.fromRGB(240, 176, 108)
 	elseif kind == "Error" then
-		accent = ERR_COLOR
+		accent = Color3.fromRGB(240, 120, 120)
 	end
 
 	toastId = toastId + 1
@@ -121,8 +180,8 @@ local function notify(opts)
 	shadow.Position = UDim2.fromOffset(-20, -20)
 	shadow.Size = UDim2.new(1, 40, 1, 40)
 	shadow.BackgroundTransparency = 1
-	shadow.Image = SHADOW_IMG
-	shadow.ImageColor3 = Color3.new(0, 0, 0)
+	shadow.Image = "rbxassetid://6014261993"
+	shadow.ImageColor3 = Color3.fromRGB(0, 0, 0)
 	shadow.ImageTransparency = 1
 	shadow.ScaleType = Enum.ScaleType.Slice
 	shadow.SliceCenter = Rect.new(49, 49, 450, 450)
@@ -132,7 +191,7 @@ local function notify(opts)
 	local card = Instance.new("CanvasGroup")
 	card.Size = UDim2.new(1, 0, 0, 0)
 	card.AutomaticSize = Enum.AutomaticSize.Y
-	card.BackgroundColor3 = BG_COLOR
+	card.BackgroundColor3 = Color3.fromRGB(20, 16, 20)
 	card.BorderSizePixel = 0
 	card.GroupTransparency = 1
 	card.Parent = slider
@@ -142,7 +201,7 @@ local function notify(opts)
 	cc.Parent = card
 
 	local outline = Instance.new("UIStroke")
-	outline.Color = STROKE_COLOR
+	outline.Color = Color3.fromRGB(244, 143, 177)
 	outline.Transparency = 0
 	outline.Thickness = 1.5
 	outline.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
@@ -151,7 +210,7 @@ local function notify(opts)
 	local tint = Instance.new("Frame")
 	tint.Position = UDim2.fromOffset(0, 0)
 	tint.Size = UDim2.new(1, 0, 0, 1)
-	tint.BackgroundColor3 = Color3.new(1, 1, 1)
+	tint.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 	tint.BackgroundTransparency = 0.93
 	tint.BorderSizePixel = 0
 	tint.ZIndex = 0
@@ -162,14 +221,14 @@ local function notify(opts)
 	glow.Position = UDim2.new(1, -10, 0, -10)
 	glow.Size = UDim2.fromOffset(260, 120)
 	glow.BackgroundTransparency = 1
-	glow.Image = GLOW_IMG
-	glow.ImageColor3 = GLOW_COLOR
+	glow.Image = "rbxassetid://8992230677"
+	glow.ImageColor3 = Color3.fromRGB(226, 218, 230)
 	glow.ImageTransparency = 0.86
 	glow.ZIndex = 0
 	glow.Parent = card
 
 	local grad = Instance.new("UIGradient")
-	grad.Color = ColorSequence.new(Color3.new(1, 1, 1), ACCENT_COLOR)
+	grad.Color = ColorSequence.new(Color3.fromRGB(255, 255, 255), Color3.fromRGB(235, 199, 246))
 	grad.Rotation = 90
 	grad.Parent = glow
 
@@ -203,7 +262,7 @@ local function notify(opts)
 	title.BackgroundTransparency = 1
 	title.Text = opts.Title or "Notification"
 	title.TextSize = 14
-	title.TextColor3 = TEXT_COLOR
+	title.TextColor3 = Color3.fromRGB(233, 229, 234)
 	title.TextXAlignment = Enum.TextXAlignment.Left
 	title.TextYAlignment = Enum.TextYAlignment.Center
 	title.TextTruncate = Enum.TextTruncate.AtEnd
@@ -220,7 +279,7 @@ local function notify(opts)
 	close.Size = UDim2.fromOffset(24, 24)
 	close.BackgroundTransparency = 1
 	close.Text = "×"
-	close.TextColor3 = MUTED_COLOR
+	close.TextColor3 = Color3.fromRGB(138, 127, 139)
 	close.TextSize = 22
 	close.AutoButtonColor = false
 	if typeof(fBold) == "EnumItem" then
@@ -231,10 +290,10 @@ local function notify(opts)
 	close.Parent = content
 
 	close.MouseEnter:Connect(function()
-		tween(close, {TextColor3 = TEXT_COLOR}, 0.15)
+		tween(close, {TextColor3 = Color3.fromRGB(233, 229, 234)}, 0.15)
 	end)
 	close.MouseLeave:Connect(function()
-		tween(close, {TextColor3 = MUTED_COLOR}, 0.2)
+		tween(close, {TextColor3 = Color3.fromRGB(138, 127, 139)}, 0.2)
 	end)
 
 	if opts.Content then
@@ -245,7 +304,7 @@ local function notify(opts)
 		body.BackgroundTransparency = 1
 		body.Text = opts.Content
 		body.TextSize = 13
-		body.TextColor3 = MUTED_COLOR
+		body.TextColor3 = Color3.fromRGB(138, 127, 139)
 		body.TextWrapped = true
 		body.TextTruncate = Enum.TextTruncate.None
 		body.TextXAlignment = Enum.TextXAlignment.Left
@@ -262,7 +321,7 @@ local function notify(opts)
 	progBg.AnchorPoint = Vector2.new(0, 1)
 	progBg.Position = UDim2.new(0, 16, 1, -8)
 	progBg.Size = UDim2.new(1, -32, 0, 3)
-	progBg.BackgroundColor3 = TRACK_COLOR
+	progBg.BackgroundColor3 = Color3.fromRGB(42, 36, 43)
 	progBg.BorderSizePixel = 0
 	progBg.Parent = card
 
@@ -321,7 +380,7 @@ local function notify(opts)
 
 	table.insert(liveToasts, dismiss)
 
-	while #liveToasts > MAX_TOASTS do
+	while #liveToasts > 4 do
 		local oldest = table.remove(liveToasts, 1)
 		oldest()
 	end
