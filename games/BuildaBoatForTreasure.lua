@@ -4,6 +4,8 @@ repeat task.wait() until LocalPlayer:FindFirstChild("OtherData")
 repeat task.wait() until workspace:FindFirstChild("BoatStages")
 repeat task.wait() until workspace:FindFirstChild("ClaimRiverResultsGold")
 
+local running = true
+
 local function CollectStage(StageNumber)
 	local Stage = workspace.BoatStages.NormalStages["CaveStage" .. StageNumber]
 	local Collect = Stage.DarknessPart
@@ -75,8 +77,6 @@ local function Farm()
 	if Char then Char:BreakJoints() end
 end
 
-running = true
-
 task.spawn(Farm)
 
 LocalPlayer.CharacterAdded:Connect(function()
@@ -89,50 +89,3 @@ end)
 _G.StopFarm = function()
 	running = false
 end
-
-task.spawn(function()
-	print("[1] notify block started")
-
-	local fetchSuccess, source = pcall(function()
-		return game:HttpGet("https://raw.githubusercontent.com/Kielthienthan/NexoraHub/refs/heads/main/modules/Interface.lua")
-	end)
-	print("[2] fetch:", fetchSuccess, source and #source)
-
-	if not fetchSuccess or not source then return end
-
-	local runSuccess, returnedValue = pcall(function()
-		local module = loadstring(source)
-		print("[3] loadstring type:", type(module))
-		if type(module) == "function" then
-			return module()
-		end
-		return nil
-	end)
-	print("[4] run:", runSuccess, type(returnedValue))
-
-	if not runSuccess then return end
-
-	local notifyApi = returnedValue
-	if type(notifyApi) ~= "table" or not notifyApi.Notify then
-		notifyApi = rawget(_G, "Nexora")
-	end
-	print("[5] api:", type(notifyApi), notifyApi and type(notifyApi.Notify))
-
-	if type(notifyApi) ~= "table" or not notifyApi.Notify then
-		task.wait(0.2)
-		notifyApi = rawget(_G, "Nexora")
-		print("[5b] api retry:", type(notifyApi), notifyApi and type(notifyApi.Notify))
-	end
-
-	if type(notifyApi) ~= "table" or not notifyApi.Notify then return end
-
-	pcall(function()
-		notifyApi.Notify({
-			Title = "Loaded",
-			Content = "Boat farm ready.",
-			Type = "Success",
-			Duration = 4,
-		})
-	end)
-	print("[6] notify called")
-end)
