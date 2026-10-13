@@ -32,81 +32,111 @@ local function tween(obj, goal, dur, style, dir)
 	return t
 end
 
-local markGui = Instance.new("ScreenGui")
-markGui.Name = "NexoraWatermark"
-markGui.ResetOnSpawn = false
-markGui.IgnoreGuiInset = true
-markGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-markGui.DisplayOrder = 999
-
-local ok1 = pcall(function()
-	markGui.Parent = game:GetService("CoreGui")
-end)
-if not ok1 or not markGui.Parent then
-	markGui.Parent = Player:WaitForChild("PlayerGui")
+local function findExistingPill()
+	local coreGui = game:GetService("CoreGui")
+	local existing = coreGui:FindFirstChild("NexoraWatermark")
+	if existing then
+		return existing
+	end
+	local playerGui = Player:FindFirstChild("PlayerGui")
+	if playerGui then
+		existing = playerGui:FindFirstChild("NexoraWatermark")
+		if existing then
+			return existing
+		end
+	end
+	return nil
 end
 
-local pill = Instance.new("TextButton")
-pill.Name = "Pill"
-pill.AnchorPoint = Vector2.new(0.5, 0)
-pill.Position = UDim2.new(0.5, 0, 0, 10)
-pill.Size = UDim2.fromOffset(0, 28)
-pill.AutomaticSize = Enum.AutomaticSize.X
-pill.BackgroundColor3 = Color3.fromRGB(20, 16, 20)
-pill.BackgroundTransparency = 0.15
-pill.BorderSizePixel = 0
-pill.Text = ""
-pill.AutoButtonColor = false
-pill.Active = false
-pill.Selectable = false
-pill.ZIndex = 30
-pill.Parent = markGui
+if not findExistingPill() then
+	local markGui = Instance.new("ScreenGui")
+	markGui.Name = "NexoraWatermark"
+	markGui.ResetOnSpawn = false
+	markGui.IgnoreGuiInset = true
+	markGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+	markGui.DisplayOrder = 999
 
-local pillCorner = Instance.new("UICorner")
-pillCorner.CornerRadius = UDim.new(1, 0)
-pillCorner.Parent = pill
+	local ok1 = pcall(function()
+		markGui.Parent = game:GetService("CoreGui")
+	end)
+	if not ok1 or not markGui.Parent then
+		markGui.Parent = Player:WaitForChild("PlayerGui")
+	end
 
-local pillStroke = Instance.new("UIStroke")
-pillStroke.Color = Color3.fromRGB(244, 143, 177)
-pillStroke.Transparency = 0
-pillStroke.Thickness = 1
-pillStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-pillStroke.Parent = pill
+	local pill = Instance.new("TextButton")
+	pill.Name = "Pill"
+	pill.AnchorPoint = Vector2.new(0.5, 0)
+	pill.Position = UDim2.new(0.5, 0, 0, 10)
+	pill.Size = UDim2.fromOffset(0, 28)
+	pill.AutomaticSize = Enum.AutomaticSize.X
+	pill.BackgroundColor3 = Color3.fromRGB(20, 16, 20)
+	pill.BackgroundTransparency = 0.15
+	pill.BorderSizePixel = 0
+	pill.Text = ""
+	pill.AutoButtonColor = false
+	pill.Active = false
+	pill.Selectable = false
+	pill.ZIndex = 30
+	pill.Parent = markGui
 
-local pillPad = Instance.new("UIPadding")
-pillPad.PaddingLeft = UDim.new(0, 9)
-pillPad.PaddingRight = UDim.new(0, 11)
-pillPad.Parent = pill
+	local pillCorner = Instance.new("UICorner")
+	pillCorner.CornerRadius = UDim.new(1, 0)
+	pillCorner.Parent = pill
 
-local pillIcon = Instance.new("ImageLabel")
-pillIcon.AnchorPoint = Vector2.new(0, 0.5)
-pillIcon.Position = UDim2.new(0, 0, 0.5, 0)
-pillIcon.Size = UDim2.fromOffset(16, 16)
-pillIcon.BackgroundTransparency = 1
-pillIcon.Image = "rbxassetid://103859712365480"
-pillIcon.ImageColor3 = Color3.fromRGB(244, 143, 177)
-pillIcon.ScaleType = Enum.ScaleType.Fit
-pillIcon.ZIndex = 31
-pillIcon.Parent = pill
+	local pillStroke = Instance.new("UIStroke")
+	pillStroke.Color = Color3.fromRGB(244, 143, 177)
+	pillStroke.Transparency = 0
+	pillStroke.Thickness = 1
+	pillStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+	pillStroke.Parent = pill
 
-local pillLabel = Instance.new("TextLabel")
-pillLabel.Position = UDim2.fromOffset(22, 0)
-pillLabel.Size = UDim2.new(0, 0, 1, 0)
-pillLabel.AutomaticSize = Enum.AutomaticSize.X
-pillLabel.BackgroundTransparency = 1
-pillLabel.Text = "Nexora"
-pillLabel.TextSize = 11
-pillLabel.TextColor3 = Color3.fromRGB(233, 229, 234)
-pillLabel.TextXAlignment = Enum.TextXAlignment.Left
-pillLabel.TextYAlignment = Enum.TextYAlignment.Center
-pillLabel.TextTruncate = Enum.TextTruncate.None
-pillLabel.ZIndex = 31
-if typeof(fMed) == "EnumItem" then
-	pillLabel.Font = fMed
-else
-	pillLabel.FontFace = fMed
+	local pillPad = Instance.new("UIPadding")
+	pillPad.PaddingLeft = UDim.new(0, 9)
+	pillPad.PaddingRight = UDim.new(0, 11)
+	pillPad.Parent = pill
+
+	local pillIcon = Instance.new("ImageLabel")
+	pillIcon.AnchorPoint = Vector2.new(0, 0.5)
+	pillIcon.Position = UDim2.new(0, 0, 0.5, 0)
+	pillIcon.Size = UDim2.fromOffset(16, 16)
+	pillIcon.BackgroundTransparency = 1
+	pillIcon.Image = "rbxassetid://103859712365480"
+	pillIcon.ImageColor3 = Color3.fromRGB(244, 143, 177)
+	pillIcon.ScaleType = Enum.ScaleType.Fit
+	pillIcon.ZIndex = 31
+	pillIcon.Parent = pill
+
+	local pillLabel = Instance.new("TextLabel")
+	pillLabel.Position = UDim2.fromOffset(22, 0)
+	pillLabel.Size = UDim2.new(0, 0, 1, 0)
+	pillLabel.AutomaticSize = Enum.AutomaticSize.X
+	pillLabel.BackgroundTransparency = 1
+	pillLabel.Text = "Nexora"
+	pillLabel.TextSize = 11
+	pillLabel.TextColor3 = Color3.fromRGB(233, 229, 234)
+	pillLabel.TextXAlignment = Enum.TextXAlignment.Left
+	pillLabel.TextYAlignment = Enum.TextYAlignment.Center
+	pillLabel.TextTruncate = Enum.TextTruncate.None
+	pillLabel.ZIndex = 31
+	if typeof(fMed) == "EnumItem" then
+		pillLabel.Font = fMed
+	else
+		pillLabel.FontFace = fMed
+	end
+	pillLabel.Parent = pill
 end
-pillLabel.Parent = pill
+
+local existingNotifyGui = game:GetService("CoreGui"):FindFirstChild("NexoraNotify")
+if not existingNotifyGui then
+	local playerGui = Player:FindFirstChild("PlayerGui")
+	if playerGui then
+		existingNotifyGui = playerGui:FindFirstChild("NexoraNotify")
+	end
+end
+
+if existingNotifyGui then
+	existingNotifyGui:Destroy()
+end
 
 local nGui = Instance.new("ScreenGui")
 nGui.Name = "NexoraNotify"
@@ -342,6 +372,57 @@ local function notify(opts)
 	task.defer(function()
 		if box.Parent and card.Parent then
 			tween(box, {Size = UDim2.new(1, 0, 0, card.AbsoluteSize.Y)}, 0.3, Enum.EasingStyle.Quint)
+		end
+	end)
+	tween(slider, {Position = UDim2.fromOffset(0, 0)}, 0.5, Enum.EasingStyle.Back)
+	tween(card, {GroupTransparency = 0}, 0.3)
+	tween(shadow, {ImageTransparency = 0.6}, 0.4)
+	tween(progFill, {Size = UDim2.fromScale(0, 1)}, dur, Enum.EasingStyle.Linear)
+
+	local dead = false
+	local function dismiss()
+		if dead then return end
+		dead = true
+
+		for i, v in ipairs(liveToasts) do
+			if v == dismiss then
+				table.remove(liveToasts, i)
+				break
+			end
+		end
+
+		tween(slider, {Position = UDim2.fromOffset(320, 0)}, 0.3, Enum.EasingStyle.Quint)
+		tween(card, {GroupTransparency = 1}, 0.2)
+		tween(outline, {Transparency = 1}, 0.15)
+		tween(shadow, {ImageTransparency = 1}, 0.2)
+
+		task.delay(0.22, function()
+			box.ClipsDescendants = true
+			tween(box, {Size = UDim2.new(1, 0, 0, -4)}, 0.22, Enum.EasingStyle.Quint)
+			task.delay(0.24, function()
+				box:Destroy()
+			end)
+		end)
+	end
+
+	task.delay(dur, dismiss)
+	close.MouseButton1Click:Connect(dismiss)
+
+	table.insert(liveToasts, dismiss)
+
+	while #liveToasts > 4 do
+		local oldest = table.remove(liveToasts, 1)
+		oldest()
+	end
+
+	return { Dismiss = dismiss }
+end
+
+_G.NexoraNotify = notify
+
+return {
+	Notify = notify,
+}0, 0, card.AbsoluteSize.Y)}, 0.3, Enum.EasingStyle.Quint)
 		end
 	end)
 	tween(slider, {Position = UDim2.fromOffset(0, 0)}, 0.5, Enum.EasingStyle.Back)
