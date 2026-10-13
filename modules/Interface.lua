@@ -33,22 +33,46 @@ local function tween(obj, goal, dur, style, dir)
 end
 
 local function findExistingPill()
-	local coreGui = game:GetService("CoreGui")
-	local existing = coreGui:FindFirstChild("NexoraWatermark")
-	if existing then
-		return existing
+	if _G._NexoraPillGui and _G._NexoraPillGui.Parent then
+		return _G._NexoraPillGui
 	end
-	local playerGui = Player:FindFirstChild("PlayerGui")
-	if playerGui then
-		existing = playerGui:FindFirstChild("NexoraWatermark")
-		if existing then
-			return existing
+
+	local places = {}
+
+	pcall(function()
+		if typeof(gethui) == "function" then
+			local h = gethui()
+			if h then
+				table.insert(places, h)
+			end
+		end
+	end)
+
+	pcall(function()
+		table.insert(places, game:GetService("CoreGui"))
+	end)
+
+	local pg = Player:FindFirstChild("PlayerGui")
+	if pg then
+		table.insert(places, pg)
+	end
+
+	for _, container in ipairs(places) do
+		if container then
+			local found = container:FindFirstChild("NexoraWatermark")
+			if found then
+				_G._NexoraPillGui = found
+				return found
+			end
 		end
 	end
+
 	return nil
 end
 
-if not findExistingPill() then
+local existingPill = findExistingPill()
+
+if not existingPill then
 	local markGui = Instance.new("ScreenGui")
 	markGui.Name = "NexoraWatermark"
 	markGui.ResetOnSpawn = false
@@ -56,10 +80,26 @@ if not findExistingPill() then
 	markGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 	markGui.DisplayOrder = 999
 
-	local ok1 = pcall(function()
-		markGui.Parent = game:GetService("CoreGui")
+	local parented = false
+
+	pcall(function()
+		if typeof(gethui) == "function" then
+			local h = gethui()
+			if h then
+				markGui.Parent = h
+				parented = true
+			end
+		end
 	end)
-	if not ok1 or not markGui.Parent then
+
+	if not parented then
+		pcall(function()
+			markGui.Parent = game:GetService("CoreGui")
+			parented = true
+		end)
+	end
+
+	if not parented then
 		markGui.Parent = Player:WaitForChild("PlayerGui")
 	end
 
@@ -124,18 +164,46 @@ if not findExistingPill() then
 		pillLabel.FontFace = fMed
 	end
 	pillLabel.Parent = pill
+
+	_G._NexoraPillGui = markGui
 end
 
-local existingNotifyGui = game:GetService("CoreGui"):FindFirstChild("NexoraNotify")
-if not existingNotifyGui then
-	local playerGui = Player:FindFirstChild("PlayerGui")
-	if playerGui then
-		existingNotifyGui = playerGui:FindFirstChild("NexoraNotify")
+local function findExistingNotify()
+	local places = {}
+
+	pcall(function()
+		if typeof(gethui) == "function" then
+			local h = gethui()
+			if h then
+				table.insert(places, h)
+			end
+		end
+	end)
+
+	pcall(function()
+		table.insert(places, game:GetService("CoreGui"))
+	end)
+
+	local pg = Player:FindFirstChild("PlayerGui")
+	if pg then
+		table.insert(places, pg)
 	end
+
+	for _, container in ipairs(places) do
+		if container then
+			local found = container:FindFirstChild("NexoraNotify")
+			if found then
+				return found
+			end
+		end
+	end
+
+	return nil
 end
 
-if existingNotifyGui then
-	existingNotifyGui:Destroy()
+local oldNotify = findExistingNotify()
+if oldNotify then
+	oldNotify:Destroy()
 end
 
 local nGui = Instance.new("ScreenGui")
@@ -145,10 +213,26 @@ nGui.IgnoreGuiInset = true
 nGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 nGui.DisplayOrder = 999
 
-local ok2 = pcall(function()
-	nGui.Parent = game:GetService("CoreGui")
+local parentedN = false
+
+pcall(function()
+	if typeof(gethui) == "function" then
+		local h = gethui()
+		if h then
+			nGui.Parent = h
+			parentedN = true
+		end
+	end
 end)
-if not ok2 or not nGui.Parent then
+
+if not parentedN then
+	pcall(function()
+		nGui.Parent = game:GetService("CoreGui")
+		parentedN = true
+	end)
+end
+
+if not parentedN then
 	nGui.Parent = Player:WaitForChild("PlayerGui")
 end
 
@@ -372,57 +456,6 @@ local function notify(opts)
 	task.defer(function()
 		if box.Parent and card.Parent then
 			tween(box, {Size = UDim2.new(1, 0, 0, card.AbsoluteSize.Y)}, 0.3, Enum.EasingStyle.Quint)
-		end
-	end)
-	tween(slider, {Position = UDim2.fromOffset(0, 0)}, 0.5, Enum.EasingStyle.Back)
-	tween(card, {GroupTransparency = 0}, 0.3)
-	tween(shadow, {ImageTransparency = 0.6}, 0.4)
-	tween(progFill, {Size = UDim2.fromScale(0, 1)}, dur, Enum.EasingStyle.Linear)
-
-	local dead = false
-	local function dismiss()
-		if dead then return end
-		dead = true
-
-		for i, v in ipairs(liveToasts) do
-			if v == dismiss then
-				table.remove(liveToasts, i)
-				break
-			end
-		end
-
-		tween(slider, {Position = UDim2.fromOffset(320, 0)}, 0.3, Enum.EasingStyle.Quint)
-		tween(card, {GroupTransparency = 1}, 0.2)
-		tween(outline, {Transparency = 1}, 0.15)
-		tween(shadow, {ImageTransparency = 1}, 0.2)
-
-		task.delay(0.22, function()
-			box.ClipsDescendants = true
-			tween(box, {Size = UDim2.new(1, 0, 0, -4)}, 0.22, Enum.EasingStyle.Quint)
-			task.delay(0.24, function()
-				box:Destroy()
-			end)
-		end)
-	end
-
-	task.delay(dur, dismiss)
-	close.MouseButton1Click:Connect(dismiss)
-
-	table.insert(liveToasts, dismiss)
-
-	while #liveToasts > 4 do
-		local oldest = table.remove(liveToasts, 1)
-		oldest()
-	end
-
-	return { Dismiss = dismiss }
-end
-
-_G.NexoraNotify = notify
-
-return {
-	Notify = notify,
-}0, 0, card.AbsoluteSize.Y)}, 0.3, Enum.EasingStyle.Quint)
 		end
 	end)
 	tween(slider, {Position = UDim2.fromOffset(0, 0)}, 0.5, Enum.EasingStyle.Back)
