@@ -2,7 +2,7 @@ local scripts = {
 	[537413528] = "https://raw.githubusercontent.com/Kielthienthan/NexoraHub/refs/heads/main/games/BuildaBoatForTreasure.lua",
 }
 
-local universal = "https://raw.githubusercontent.com/Kielthienthan/NexoraHub/refs/heads/main/games/Arsenal.lua"
+local universal = "https://raw.githubusercontent.com/Kielthienthan/NexoraHub/refs/heads/main/games/AimbotBlatant.lua"
 
 local function fetch(url)
 	local ok, res = pcall(function() return game:HttpGet(url) end)
